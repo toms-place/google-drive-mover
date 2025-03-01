@@ -10,3 +10,5 @@ Configure [Google API Access](https://console.cloud.google.com/apis/dashboard) o
 bun install
 bun run start -n newOwnerEmail -o oldOwnerEmail
 ```
+
+A Browser Window will open and ask for permissions to access the Google Drive API, first for the new owner, then for the old owner. After that the script will run and move all files from the oldOwner to the newOwner.
