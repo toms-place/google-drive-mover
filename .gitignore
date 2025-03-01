@@ -1,0 +1,6 @@
+.env
+oauth2.keys.json
+node_modules
+bun.lockb
+*.py
+dist
