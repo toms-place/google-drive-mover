@@ -56,7 +56,7 @@ if (!args["--skipOldOwner"]) {
   };
   let ownerSourceFiles = await sourceV3.files.list(options);
 
-  while (ownerSourceFiles.data.nextPageToken) {
+  do {
     if (nextPageCount++ >= maxNextPage || !ownerSourceFiles.data.files) break;
     console.log(
       `Transferring ownership of ${ownerSourceFiles.data.files.length} files on page ${nextPageCount} from source to target account`
@@ -86,11 +86,12 @@ if (!args["--skipOldOwner"]) {
     } catch (error) {
       console.log(error);
     }
+    if (!ownerSourceFiles.data.nextPageToken) break;
     ownerSourceFiles = await sourceV3.files.list({
       ...options,
       pageToken: ownerSourceFiles.data.nextPageToken,
     });
-  }
+  } while (ownerSourceFiles.data.nextPageToken);
 
   console.log("Waiting 30 seconds for permissions to propagate");
   await new Promise((resolve) => setTimeout(resolve, 30000));
@@ -106,7 +107,7 @@ let targetFiles = await targetV3.files.list(targetOptions);
 nextPageCount = 0;
 
 console.log("Accepting ownership of files at target account");
-while (targetFiles.data.nextPageToken) {
+do {
   if (nextPageCount++ >= maxNextPage || !targetFiles.data.files) break;
   console.log(
     `Accepting ownership of ${targetFiles.data.files.length} files on page ${nextPageCount} at target account`
@@ -130,10 +131,11 @@ while (targetFiles.data.nextPageToken) {
   } catch (error) {
     console.log(error);
   }
+  if (!targetFiles.data.nextPageToken) break;
   targetFiles = await targetV3.files.list({
     ...targetOptions,
     pageToken: targetFiles.data.nextPageToken,
   });
-}
+} while (targetFiles.data.nextPageToken);
 
 server.close();
